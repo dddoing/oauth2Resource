@@ -16,11 +16,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
-public class JwtEntryPoint implements AuthenticationEntryPoint {
+public class JwtAuthEntryPoint implements AuthenticationEntryPoint {
 
     private ObjectMapper mapper;
 
-    public JwtEntryPoint(ObjectMapper mapper) {
+    public JwtAuthEntryPoint(ObjectMapper mapper) {
         //
         this.mapper = mapper;
     }
@@ -33,12 +33,14 @@ public class JwtEntryPoint implements AuthenticationEntryPoint {
         String exceptionMessage = e.getMessage();
 
         String messageCode = null;
-        String exceptionName = e.getClass().getSimpleName();
+        String exceptionName = null;
         if (exceptionMessage.startsWith("Access token expired:")) {
             messageCode = "common.access_token_expired";
+            exceptionName = "Invalid token";
         }
         else {
             messageCode = "common.unknown_auth_exception";
+            exceptionName = e.getClass().getSimpleName();
         }
 
         ServletServerHttpResponse res = new ServletServerHttpResponse(response);
